@@ -1,17 +1,19 @@
 import React, { useState, useMemo, useRef, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom'; // [추가] 이동을 위한 훅
 import useApi from '../hooks/useApi';
-import { RecipeContext } from '../context/RecipeContext'; // Context 사용
-import { Container, Form, Button, Card, Row, Col, Alert, OverlayTrigger, Tooltip, Badge } from 'react-bootstrap';
+import { RecipeContext } from '../context/RecipeContext';
+import { Container, Form, Button, Card, Row, Col, Alert, Badge } from 'react-bootstrap';
 
 export default function Search() {
   const [inputVal, setInputVal] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isExactMatch, setIsExactMatch] = useState(false);
-  const [category, setCategory] = useState("All"); // [기능 추가 2] 카테고리 필터 상태
+  const [category, setCategory] = useState("All");
 
-  // Context에서 dispatch 함수 가져오기 (강의안 99p)
-  const { dispatch } = useContext(RecipeContext); 
+  const { dispatch } = useContext(RecipeContext);
   const { data, loading, error, fetchRecipes } = useApi();
+  
+  const navigate = useNavigate(); // [추가] 네비게이션 함수 생성
   const inputRef = useRef(null);
   
   useEffect(() => {
@@ -25,35 +27,33 @@ export default function Search() {
     fetchRecipes(inputVal);
   };
 
-  // 기존 saveRecipe 함수 제거 -> dispatch로 대체
-
-  // [Hook 활용] useMemo로 필터링 로직 통합 (정확도 + 카테고리)
   const filteredData = useMemo(() => {
     if (!data) return [];
-    
     let result = data;
-
-    // 1. 카테고리 필터링 (Select Box 값 적용)
     if (category !== "All") {
       result = result.filter(item => item.RCP_PAT2 === category);
     }
-
-    // 2. 정확도 필터링
     if (isExactMatch) {
       result = result.filter(recipe => {
         const ingredients = recipe.RCP_PARTS_DTLS.split(/[,\n]/).map(s => s.trim());
         return ingredients.includes(searchQuery);
       });
     }
-    
     return result;
-  }, [data, isExactMatch, searchQuery, category]); 
+  }, [data, isExactMatch, searchQuery, category]);
+
+  // [추가] 상세 페이지로 이동하는 함수
+  const goToDetail = (recipe) => {
+    // state 옵션을 통해 클릭한 레시피 데이터를 그대로 들고 이동함
+    navigate('/recipe/view', { state: { recipe } });
+  };
 
   return (
     <Container className="mt-5">
       <h2>🍳 냉장고 재료로 레시피 찾기</h2>
       
       <Form onSubmit={handleSearch} className="mb-4">
+        {/* ... (검색 폼 부분은 기존과 동일) ... */}
         <Row className="g-2">
           <Col xs={12} md={6}>
             <Form.Control 
@@ -64,8 +64,6 @@ export default function Search() {
               onChange={(e) => setInputVal(e.target.value)}
             />
           </Col>
-          
-          {/* [기능 추가 2] 요리 종류 선택 (강의안 134p Select) */}
           <Col xs={6} md={3}>
             <Form.Select value={category} onChange={(e) => setCategory(e.target.value)}>
               <option value="All">전체 종류</option>
@@ -75,12 +73,10 @@ export default function Search() {
               <option value="후식">후식</option>
             </Form.Select>
           </Col>
-
           <Col xs={6} md={3}>
             <Button variant="primary" type="submit" className="w-100">검색</Button>
           </Col>
         </Row>
-        
         <div className="mt-2">
            <Form.Check 
               type="switch"
@@ -99,28 +95,30 @@ export default function Search() {
         {filteredData.map((recipe, index) => (
           <Col key={index}>
             <Card className="h-100 shadow-sm">
-              <Card.Img variant="top" src={recipe.ATT_FILE_NO_MAIN} style={{height: '200px', objectFit: 'cover'}} />
+              {/* 이미지 클릭 시에도 상세페이지 이동하도록 수정 */}
+              <div style={{cursor: 'pointer'}} onClick={() => goToDetail(recipe)}>
+                <Card.Img variant="top" src={recipe.ATT_FILE_NO_MAIN} style={{height: '200px', objectFit: 'cover'}} />
+              </div>
+              
               <Card.Body className="d-flex flex-column">
-                <Card.Title className="d-flex justify-content-between">
-                  {recipe.RCP_NM}
+                <Card.Title className="d-flex justify-content-between align-items-center">
+                  <span className="text-truncate" style={{maxWidth: '70%'}}>{recipe.RCP_NM}</span>
                   <Badge bg="secondary">{recipe.RCP_PAT2}</Badge>
                 </Card.Title>
                 
-                <OverlayTrigger
-                  placement="top"
-                  overlay={<Tooltip id={`t-${index}`}>{recipe.RCP_PARTS_DTLS}</Tooltip>}
-                >
-                  <Card.Text className="text-muted text-truncate" style={{cursor:'pointer'}}>
-                    <strong>재료:</strong> {recipe.RCP_PARTS_DTLS}
-                  </Card.Text>
-                </OverlayTrigger>
+                <Card.Text className="text-muted text-truncate">
+                  {recipe.RCP_PARTS_DTLS}
+                </Card.Text>
 
-                <div className="mt-auto">
-                  {/* Context의 dispatch 사용 */}
-                  <Button variant="outline-success" className="w-100"
-                    onClick={() => dispatch({ type: 'ADD', payload: recipe })}
-                  >
-                    내 레시피북에 저장
+                <div className="mt-auto d-flex gap-2">
+                  {/* [수정] 조리법 상세 버튼 */}
+                  <Button variant="primary" className="flex-grow-1" onClick={() => goToDetail(recipe)}>
+                    조리법 보기
+                  </Button>
+                  
+                  {/* 저장 버튼 */}
+                  <Button variant="outline-success" onClick={() => dispatch({ type: 'ADD', payload: recipe })}>
+                    저장
                   </Button>
                 </div>
               </Card.Body>
