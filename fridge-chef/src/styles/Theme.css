@@ -1,0 +1,32 @@
+:root {
+  --main-brown: #8D6E63;     /* 메인 브라운 (한식 느낌) */
+  --sub-beige: #D7CCC8;      /* 연한 베이지 */
+  --point-orange: #FF7043;   /* 포인트 오렌지 (양념/고추기름 느낌) */
+  --bg-cream: #FFF8E1;       /* 전체 배경 크림 */
+  --text-brown: #4E342E;     /* 텍스트 브라운 */
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-cream);
+  color: var(--text-brown);
+}
+
+a {
+  text-decoration: none;
+}
+
+.app-main-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content {
+  flex: 1;
+}
