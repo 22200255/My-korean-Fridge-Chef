@@ -34,7 +34,7 @@ export default function MyRecipes() {
 
   return (
     <Container className="mt-5">
-      <h2>📒 나의 즐겨찾기 레시피 ({savedRecipes.length}개)</h2>
+      <h2> 나의 즐겨찾기 레시피 ({savedRecipes.length}개)</h2>
       {savedRecipes.length === 0 && <p className="text-muted">저장된 레시피가 없습니다.</p>}
       
       <Row xs={1} md={2} className="g-4">
@@ -68,7 +68,7 @@ export default function MyRecipes() {
                   </Form.Group>
                 ) : (
                   <>
-                    <Card.Text>📝 {recipe.myMemo || "메모 없음"}</Card.Text>
+                    <Card.Text> {recipe.myMemo || "메모 없음"}</Card.Text>
                     
                     <div className="mt-auto">
                       {/* [추가] 조리법 보기 버튼 */}

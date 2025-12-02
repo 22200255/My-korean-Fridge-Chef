@@ -71,7 +71,7 @@ export default function RecipesPage() {
 
   return (
     <Container className="mt-4 mb-4">
-      <h2 className="mb-2">🍲 전체 레시피 목록</h2>
+      <h2 className="mb-2"> 전체 레시피 목록</h2>
       <p style={{ fontSize: '0.9rem', color: 'var(--text-brown)' }}>
         공공데이터 API에서 불러온 <strong>전체 한식 레시피</strong>를 종류별로 둘러볼 수 있어요.
       </p>

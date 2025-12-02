@@ -59,7 +59,7 @@ export default function Search() {
 
   return (
     <Container className="mt-5">
-      <h2>🍳 냉장고 재료로 레시피 찾기</h2>
+      <h2> 냉장고 재료로 레시피 찾기</h2>
       
       <Form onSubmit={handleSearch} className="mb-4">
         <Row className="g-2">
@@ -123,7 +123,7 @@ export default function Search() {
                         overlay={<Tooltip id={`alert-${index}`}>포함된 알레르기 유발 물질:<br/>{allergies.join(', ')}</Tooltip>}
                       >
                         <Badge bg="warning" text="dark" style={{cursor: 'help'}}>
-                          ⚠️ 알레르기 주의
+                           알레르기 주의
                         </Badge>
                       </OverlayTrigger>
                     </div>

@@ -42,7 +42,7 @@ export default function RecipeDetail() {
         
         {/* [기능 추가 1] 상세 화면에서 저장 버튼 */}
         <Button variant="success" onClick={handleSave}>
-          💖 이 레시피 저장하기
+           이 레시피 저장하기
         </Button>
       </div>
 
@@ -56,7 +56,7 @@ export default function RecipeDetail() {
           </div>
           <Card className="bg-light border-0">
             <Card.Body>
-              <Card.Title>📝 재료 준비</Card.Title>
+              <Card.Title> 재료 준비</Card.Title>
               <Card.Text style={{ lineHeight: '1.8' }}>
                 {recipe.RCP_PARTS_DTLS}
               </Card.Text>

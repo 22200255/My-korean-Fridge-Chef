@@ -20,7 +20,7 @@ const recipeReducer = (state, action) => {
         alert("이미 저장된 레시피입니다!");
         return state;
       }
-      alert("나만의 레시피북에 저장되었습니다! 📝");
+      alert("나만의 레시피북에 저장되었습니다!");
       return { ...state, savedRecipes: [...state.savedRecipes, { ...action.payload, myMemo: "" }] };
       
     case 'DELETE':
