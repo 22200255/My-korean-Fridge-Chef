@@ -14,7 +14,7 @@ function AppNavBar() {
     textDecoration: 'none'
   });
 
-  // 🔥 로고/브랜드 클릭 → 검색 상태 초기화 + 홈으로 이동
+  // 로고/브랜드 클릭 → 검색 상태 초기화 + 홈으로 이동
   const handleBrandClick = (e) => {
     e.preventDefault(); // 기본 Link 동작 막고
     if (dispatch) {

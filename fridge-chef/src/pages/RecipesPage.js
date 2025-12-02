@@ -25,17 +25,15 @@ export default function RecipesPage() {
 
   const navigate = useNavigate();
 
-  // 페이지 처음 들어올 때 전체 레시피 한 번 불러오기
+  // 전체 레시피 한 번 불러오기
   useEffect(() => {
     const fetchAllRecipes = async () => {
       setLoading(true);
       setError(null);
       try {
-        // ⚠ 필요에 따라 1/200 → 1/500, 1/1000 으로 늘릴 수 있음
         const url = `/api/${API_KEY}/COOKRCP01/json/1/200`;
         const response = await axios.get(url);
 
-        // 공공데이터 포맷: data.COOKRCP01.row 에 레시피 배열이 들어있음
         const data = response.data;
         const rows =
           data &&
@@ -56,7 +54,7 @@ export default function RecipesPage() {
     fetchAllRecipes();
   }, []);
 
-  // 카테고리로 필터링된 리스트
+  // 카테고리로 필터
   const filteredRecipes = useMemo(() => {
     if (!allRecipes || allRecipes.length === 0) return [];
 
@@ -76,7 +74,7 @@ export default function RecipesPage() {
         공공데이터 API에서 불러온 <strong>전체 한식 레시피</strong>를 종류별로 둘러볼 수 있어요.
       </p>
 
-      {/* 로딩 상태 */}
+      {/* 로딩 */}
       {loading && (
         <div className="mt-4 text-center">
           <Spinner animation="border" role="status" size="sm" className="me-2" />
@@ -84,7 +82,7 @@ export default function RecipesPage() {
         </div>
       )}
 
-      {/* 에러 상태 */}
+      {/* 에러 */}
       {error && (
         <Alert variant="danger" className="mt-3">
           {error}
@@ -94,7 +92,7 @@ export default function RecipesPage() {
       {/* 데이터 없음 */}
       {!loading && !error && allRecipes.length === 0 && (
         <Alert variant="light" className="mt-3">
-          불러온 레시피가 없습니다. API 키나 요청 범위(1/200)를 다시 확인해 주세요.
+          불러온 레시피가 없습니다. API 키나 요청 범위를 다시 확인해 주세요.
         </Alert>
       )}
 
@@ -120,20 +118,25 @@ export default function RecipesPage() {
             </ButtonGroup>
           </div>
 
-          {/* 필터링된 레시피 카드 목록 */}
+          {/* 카드 목록 */}
           {filteredRecipes.length === 0 ? (
             <Alert variant="light">
               선택한 카테고리에 해당하는 레시피가 없습니다.
             </Alert>
           ) : (
-            <Row className="mt-3">
+            <Row className="mt-3 g-4">
               {filteredRecipes.map((recipe) => (
-                <Col key={recipe.RCP_SEQ} xs={12} md={6} lg={4}>
+                <Col
+                  key={recipe.RCP_SEQ}
+                  xs={12}
+                  md={6}
+                  lg={4}
+                  className="d-flex"
+                >
                   <RecipeCard
                     recipe={recipe}
                     onClick={() => goToDetail(recipe)}
-                    // 여기서는 즐겨찾기 토글은 사용 X (즐겨찾기는 MyRecipes 쪽에서 관리)
-                    onToggleFavorite={null}
+                    onToggleFavorite={null} // 전체 목록에서는 즐겨찾기 토글 X
                     isFavorite={false}
                   />
                 </Col>
