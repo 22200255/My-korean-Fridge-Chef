@@ -20,6 +20,14 @@ const recipeReducer = (state, action) => {
       if (state.savedRecipes.some(r => r.RCP_SEQ === action.payload.RCP_SEQ)) {
         return state;
       }
+      alert("나만의 레시피북에 저장되었습니다!");
+      return { ...state, savedRecipes: [...state.savedRecipes, { ...action.payload, myMemo: "" }] };
+      
+    case 'DELETE':
+      if (!window.confirm("정말 삭제하시겠습니까?")) return state;
+      return { ...state, savedRecipes: state.savedRecipes.filter(r => r.RCP_SEQ !== action.payload) };
+      
+    case 'UPDATE_MEMO':
       return {
         ...state,
         savedRecipes: [

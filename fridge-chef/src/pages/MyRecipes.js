@@ -34,29 +34,60 @@ export default function MyRecipes() {
   };
 
   return (
-    <Container className="mt-4 mb-4">
-      <h2 className="mb-3">나의 레시피북</h2>
-
-      {savedRecipes.length === 0 ? (
-        <p>아직 저장된 레시피가 없습니다. 검색 후 마음에 드는 레시피를 저장해 보세요!</p>
-      ) : (
-        <Row className="g-3">
-          {savedRecipes.map((recipe) => (
-            <Col key={recipe.RCP_SEQ} xs={12} md={6} lg={4}>
-              <Card
-                className="h-100 shadow-sm"
-                style={{
-                  borderRadius: 16,
-                  border: '1px solid var(--sub-beige)',
-                  overflow: 'hidden'
-                }}
-              >
-                {recipe.ATT_FILE_NO_MAIN && (
-                  <Card.Img
-                    variant="top"
-                    src={recipe.ATT_FILE_NO_MAIN}
-                    style={{ height: 180, objectFit: 'cover' }}
-                  />
+    <Container className="mt-5">
+      <h2> 나의 즐겨찾기 레시피 ({savedRecipes.length}개)</h2>
+      {savedRecipes.length === 0 && <p className="text-muted">저장된 레시피가 없습니다.</p>}
+      
+      <Row xs={1} md={2} className="g-4">
+        {savedRecipes.map((recipe) => (
+          <Col key={recipe.RCP_SEQ}>
+            <Card className="h-100 shadow-sm">
+              {/* [수정] 이미지 클릭 시 상세페이지 이동 */}
+              <div style={{cursor: 'pointer'}} onClick={() => goToDetail(recipe)}>
+                <Card.Img variant="top" src={recipe.ATT_FILE_NO_MAIN} style={{height: '200px', objectFit: 'cover'}}/>
+              </div>
+              <Card.Body className="d-flex flex-column">
+                {/* [수정] 제목 클릭 시 상세페이지 이동 */}
+                <Card.Title 
+                  style={{cursor: 'pointer'}} 
+                  onClick={() => goToDetail(recipe)}
+                >
+                  {recipe.RCP_NM}
+                </Card.Title>
+                
+                {editId === recipe.RCP_SEQ ? (
+                  <Form.Group className="mb-3">
+                    <Form.Control 
+                      as="textarea" 
+                      value={memoInput} 
+                      onChange={(e) => setMemoInput(e.target.value)} 
+                    />
+                    <div className="mt-2">
+                      <Button size="sm" onClick={() => saveEdit(recipe.RCP_SEQ)} className="me-2">저장</Button>
+                      <Button size="sm" variant="secondary" onClick={() => setEditId(null)}>취소</Button>
+                    </div>
+                  </Form.Group>
+                ) : (
+                  <>
+                    <Card.Text> {recipe.myMemo || "메모 없음"}</Card.Text>
+                    
+                    <div className="mt-auto">
+                      {/* [추가] 조리법 보기 버튼 */}
+                      <Button 
+                        variant="primary" 
+                        size="sm" 
+                        className="w-100 mb-2" 
+                        onClick={() => goToDetail(recipe)}
+                      >
+                        조리법 보기
+                      </Button>
+                      
+                      <div className="d-flex justify-content-end">
+                        <Button size="sm" variant="warning" className="me-2" onClick={() => startEdit(recipe)}>메모 수정</Button>
+                        <Button size="sm" variant="danger" onClick={() => handleDelete(recipe.RCP_SEQ)}>삭제</Button>
+                      </div>
+                    </div>
+                  </>
                 )}
                 <Card.Body className="d-flex flex-column">
                   <Card.Title className="d-flex justify-content-between align-items-center">

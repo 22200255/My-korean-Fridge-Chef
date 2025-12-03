@@ -104,11 +104,10 @@ export default function Search() {
   }, [results, category, isExact, query]);
 
   return (
-    <Container>
-      <h2 className="mb-3">재료로 한식 레시피 찾기</h2>
-
-      {/* 검색 폼 */}
-      <Form onSubmit={handleSearch} className="mb-3">
+    <Container className="mt-5">
+      <h2> 냉장고 재료로 레시피 찾기</h2>
+      
+      <Form onSubmit={handleSearch} className="mb-4">
         <Row className="g-2">
           <Col xs={12} md={6}>
             <Form.Control
@@ -194,7 +193,9 @@ export default function Search() {
                           </Tooltip>
                         }
                       >
-                        <Badge bg="danger">알레르기 주의</Badge>
+                        <Badge bg="warning" text="dark" style={{cursor: 'help'}}>
+                           알레르기 주의
+                        </Badge>
                       </OverlayTrigger>
                     </div>
                   )}
