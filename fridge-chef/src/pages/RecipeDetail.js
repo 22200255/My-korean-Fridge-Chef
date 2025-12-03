@@ -1,18 +1,18 @@
 import React, { useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RecipeContext } from '../context/RecipeContext'; // [추가] 저장 기능을 위해 Context 불러오기
+import { RecipeContext } from '../context/RecipeContext';
 import { Container, Row, Col, Image, Badge, Button, Card } from 'react-bootstrap';
 
 export default function RecipeDetail() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { dispatch } = useContext(RecipeContext); // [추가] dispatch 사용
-  
+  const { savedRecipes = [], dispatch } = useContext(RecipeContext) || {};
+
   const recipe = location.state?.recipe;
 
   useEffect(() => {
     if (!recipe) {
-      alert("잘못된 접근입니다. 검색 화면으로 이동합니다.");
+      alert('잘못된 접근입니다. 검색 화면으로 이동합니다.');
       navigate('/');
     }
   }, [recipe, navigate]);
@@ -27,16 +27,27 @@ export default function RecipeDetail() {
     if (text) manuals.push({ step: i, text, img });
   }
 
-  // [기능 추가 1] 저장 핸들러
   const handleSave = () => {
+    if (!dispatch) return;
+    if (savedRecipes.some((r) => r.RCP_SEQ === recipe.RCP_SEQ)) {
+      alert('이미 저장된 레시피입니다!');
+      return;
+    }
     dispatch({ type: 'ADD', payload: recipe });
+    alert('나만의 레시피북에 저장되었습니다!');
   };
 
   return (
     <Container className="mt-5 mb-5">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        {/* [기능 추가 2] 뒤로가기 시 검색 결과 유지 (Search.js가 Context를 쓰므로 자동 해결됨) */}
-        <Button variant="outline-secondary" onClick={() => navigate(-1)}>
+        <Button
+          onClick={() => navigate(-1)}
+          style={{
+            backgroundColor: 'transparent',
+            borderColor: 'var(--sub-beige)',
+            color: 'var(--text-brown)'
+          }}
+        >
           &larr; 뒤로 가기
         </Button>
         
@@ -48,10 +59,17 @@ export default function RecipeDetail() {
 
       <Row>
         <Col md={5} className="mb-4">
-          <Image src={recipe.ATT_FILE_NO_MAIN} fluid rounded className="mb-3 w-100 shadow-sm" />
+          <Image
+            src={recipe.ATT_FILE_NO_MAIN}
+            fluid
+            rounded
+            className="mb-3 w-100 shadow-sm"
+          />
           <h2 className="mb-2">{recipe.RCP_NM}</h2>
           <div className="mb-3">
-            <Badge bg="primary" className="me-2">{recipe.RCP_PAT2}</Badge>
+            <Badge bg="primary" className="me-2">
+              {recipe.RCP_PAT2}
+            </Badge>
             <Badge bg="success">{recipe.RCP_WAY2}</Badge>
           </div>
           <Card className="bg-light border-0">
@@ -65,18 +83,38 @@ export default function RecipeDetail() {
         </Col>
 
         <Col md={7}>
-          <h3 className="mb-4 border-bottom pb-2">🍳 조리 순서</h3>
+          <h3 className="mb-4 border-bottom pb-2">조리 순서</h3>
           {manuals.map((manual) => (
-            <div key={manual.step} className="d-flex mb-4 align-items-start">
+            <div
+              key={manual.step}
+              className="d-flex mb-4 align-items-start"
+            >
               <div className="me-3 text-center">
-                <Badge bg="dark" pill style={{ width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Badge
+                  bg="dark"
+                  pill
+                  style={{
+                    width: '30px',
+                    height: '30px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
                   {manual.step}
                 </Badge>
               </div>
               <div className="flex-grow-1">
-                <p className="fs-5 mb-2">{manual.text.replace(/^\d+\.\s*/, '')}</p>
+                <p className="fs-5 mb-2">
+                  {manual.text.replace(/^\d+\.\s*/, '')}
+                </p>
                 {manual.img && (
-                  <Image src={manual.img} rounded fluid style={{ maxHeight: '200px' }} />
+                  <Image
+                    src={manual.img}
+                    rounded
+                    fluid
+                    style={{ maxHeight: '200px' }}
+                  />
                 )}
               </div>
             </div>

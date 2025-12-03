@@ -1,3 +1,5 @@
+// src/components/RecipeCard.js
+
 import React from 'react';
 import { Card, Button, Badge } from 'react-bootstrap';
 
@@ -14,12 +16,13 @@ function RecipeCard({ recipe, onClick, onToggleFavorite, isFavorite }) {
 
   return (
     <Card
-      className="mb-3"
+      className="mb-3 d-flex flex-column h-100"
       style={{
         borderRadius: 16,
         border: '1px solid var(--sub-beige)',
         overflow: 'hidden',
-        boxShadow: '0 4px 8px rgba(0,0,0,0.05)'
+        boxShadow: '0 4px 8px rgba(0,0,0,0.05)',
+        backgroundColor: '#fff'
       }}
     >
       {ATT_FILE_NO_MAIN && (
@@ -30,8 +33,15 @@ function RecipeCard({ recipe, onClick, onToggleFavorite, isFavorite }) {
           style={{ height: 200, objectFit: 'cover' }}
         />
       )}
-      <Card.Body>
-        <Card.Title style={{ color: 'var(--text-brown)', fontWeight: 'bold' }}>
+
+      <Card.Body className="d-flex flex-column">
+        <Card.Title
+          style={{
+            color: 'var(--text-brown)',
+            fontWeight: 'bold',
+            fontSize: '1rem'
+          }}
+        >
           {RCP_NM}
         </Card.Title>
 
@@ -49,19 +59,31 @@ function RecipeCard({ recipe, onClick, onToggleFavorite, isFavorite }) {
         </div>
 
         {RCP_PARTS_DTLS && (
-          <Card.Text style={{ fontSize: '0.85rem', maxHeight: 70, overflow: 'hidden' }}>
+          <Card.Text
+            style={{
+              fontSize: '0.85rem',
+              maxHeight: 70,
+              overflow: 'hidden'
+            }}
+          >
             {RCP_PARTS_DTLS}
           </Card.Text>
         )}
 
-        <div className="d-flex justify-content-between mt-2">
+        {/* 버튼 영역을 항상 카드 맨 아래로 보내기 */}
+        <div className="mt-auto d-flex justify-content-between pt-2">
           <Button
             variant="outline-secondary"
             size="sm"
             onClick={onClick}
+            style={{
+              borderColor: 'var(--sub-beige)',
+              color: 'var(--text-brown)'
+            }}
           >
             자세히 보기
           </Button>
+
           {onToggleFavorite && (
             <Button
               size="sm"
@@ -72,7 +94,7 @@ function RecipeCard({ recipe, onClick, onToggleFavorite, isFavorite }) {
               }}
               onClick={onToggleFavorite}
             >
-              {isFavorite ? '★ 즐겨찾기 해제' : '☆ 즐겨찾기'}
+              {isFavorite ? '즐겨찾기 해제' : '즐겨찾기'}
             </Button>
           )}
         </div>
