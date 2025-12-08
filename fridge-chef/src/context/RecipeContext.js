@@ -22,11 +22,8 @@ const recipeReducer = (state, action) => {
       }
       alert("나만의 레시피북에 저장되었습니다!");
       return { ...state, savedRecipes: [...state.savedRecipes, { ...action.payload, myMemo: "" }] };
-    } // 👈 수정됨: 여기서 ADD 블록을 확실하게 닫아줍니다.
+    }
 
-    // ❌ 삭제됨: 여기에 있던 중복되고 잘못된 DELETE, UPDATE_MEMO 코드를 제거했습니다.
-
-    // 👇 아래부터는 정상적인 코드들입니다.
     case 'DELETE': {
       if (!window.confirm("정말 삭제하시겠습니까?")) return state; // confirm 로직 유지
       return {
@@ -57,7 +54,7 @@ const recipeReducer = (state, action) => {
       };
     }
 
-    // 🔥 여기: 검색 상태 전체 초기화
+    // 검색 상태 전체 초기화
     case 'RESET_SEARCH': {
       return {
         ...state,
