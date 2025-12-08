@@ -131,12 +131,12 @@ export default function RecipesPage() {
                   xs={12}
                   md={6}
                   lg={4}
-                  className="d-flex"
+                  // [수정] d-flex 클래스 제거 (가로 길이 꽉 차게 수정됨)
                 >
                   <RecipeCard
                     recipe={recipe}
                     onClick={() => goToDetail(recipe)}
-                    onToggleFavorite={null} // 전체 목록에서는 즐겨찾기 토글 X
+                    onToggleFavorite={null} 
                     isFavorite={false}
                   />
                 </Col>
