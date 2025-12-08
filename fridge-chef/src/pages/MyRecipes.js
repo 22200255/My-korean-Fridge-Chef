@@ -38,16 +38,15 @@ export default function MyRecipes() {
       <h2> 나의 즐겨찾기 레시피 ({savedRecipes.length}개)</h2>
       {savedRecipes.length === 0 && <p className="text-muted">저장된 레시피가 없습니다.</p>}
       
-      <Row xs={1} md={2} className="g-4">
+      {/* [수정] lg={3} 추가하여 화면이 넓을 때 3등분으로 보이도록 변경 */}
+      <Row xs={1} md={2} lg={3} className="g-4">
         {savedRecipes.map((recipe) => (
           <Col key={recipe.RCP_SEQ}>
             <Card className="h-100 shadow-sm">
-              {/* [수정] 이미지 클릭 시 상세페이지 이동 */}
               <div style={{cursor: 'pointer'}} onClick={() => goToDetail(recipe)}>
                 <Card.Img variant="top" src={recipe.ATT_FILE_NO_MAIN} style={{height: '200px', objectFit: 'cover'}}/>
               </div>
               <Card.Body className="d-flex flex-column">
-                {/* [수정] 제목 클릭 시 상세페이지 이동 */}
                 <Card.Title 
                   style={{cursor: 'pointer'}} 
                   onClick={() => goToDetail(recipe)}
@@ -72,7 +71,6 @@ export default function MyRecipes() {
                     <Card.Text> {recipe.myMemo || "메모 없음"}</Card.Text>
                     
                     <div className="mt-auto">
-                      {/* [추가] 조리법 보기 버튼 */}
                       <Button 
                         variant="primary" 
                         size="sm" 
