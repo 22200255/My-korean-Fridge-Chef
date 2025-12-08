@@ -52,9 +52,20 @@ export default function RecipeDetail() {
         </Button>
         
         {/* [기능 추가 1] 상세 화면에서 저장 버튼 */}
-        <Button variant="success" onClick={handleSave}>
-           이 레시피 저장하기
+        <Button
+          onClick={handleSave}
+          style={{
+            backgroundColor: 'var(--point-orange)',
+            borderColor: 'var(--point-orange)',
+            color: '#fff',
+            fontWeight: 'bold',
+            paddingInline: '20px',
+            paddingBlock: '10px'
+          }}
+      >
+          이 레시피 저장하기
         </Button>
+
       </div>
 
       <Row>

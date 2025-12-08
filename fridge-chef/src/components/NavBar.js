@@ -57,7 +57,7 @@ function AppNavBar() {
               objectFit: 'cover'
             }}
           />
-          <span>한식 냉장고 레시피</span>
+          <span>냉장고 너머의 한(韓)상</span>
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="main-nav" />
