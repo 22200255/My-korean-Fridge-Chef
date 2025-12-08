@@ -21,7 +21,7 @@ export default function Search() {
   const {
     searchState = { query: "", results: [], category: "All", isExact: false },
     dispatch,
-    addRecipe // [수정] addRecipe 함수 가져오기
+    addRecipe // Context에서 addRecipe 함수 가져오기
   } = contextValue;
 
   const { query, results, category, isExact } = searchState;
@@ -52,6 +52,7 @@ export default function Search() {
     const data = await fetchRecipes(query.trim());
     let filtered = data || [];
 
+    // 1차 필터링
     if (category !== 'All') {
       filtered = filtered.filter((r) => r.RCP_PAT2 === category);
     }
@@ -75,13 +76,13 @@ export default function Search() {
     navigate('/recipe/view', { state: { recipe } });
   };
 
-  // [수정] Context의 addRecipe 사용
   const handleSave = (recipe) => {
     if (addRecipe) {
       addRecipe(recipe);
     }
   };
 
+  // 2차 필터링 (Memoization)
   const filteredData = useMemo(() => {
     if (!results || results.length === 0) return [];
     let data = results;
@@ -105,17 +106,10 @@ export default function Search() {
       <h2>🍳 냉장고 재료로 레시피 찾기</h2>
       
       <Form onSubmit={handleSearch} className="mb-4">
-        <Row className="g-2">
-          <Col xs={12} md={6}>
-            <Form.Control
-              ref={inputRef}
-              type="text"
-              placeholder="재료 입력 (예: 새우, 계란)"
-              value={query}
-              onChange={(e) => updateSearchState({ query: e.target.value })}
-            />
-          </Col>
-
+        {/* [수정] 순서 변경: 필터(Select) -> 입력창(Input) -> 버튼(Button) */}
+        <Row className="g-2 align-items-center">
+          
+          {/* 1. 검색 필터 (왼쪽 배치) */}
           <Col xs={6} md={3}>
             <Form.Select
               value={category}
@@ -131,6 +125,18 @@ export default function Search() {
             </Form.Select>
           </Col>
 
+          {/* 2. 검색어 입력 창 (중앙 배치) */}
+          <Col xs={12} md={6}>
+            <Form.Control
+              ref={inputRef}
+              type="text"
+              placeholder="재료 입력 (예: 새우, 계란)"
+              value={query}
+              onChange={(e) => updateSearchState({ query: e.target.value })}
+            />
+          </Col>
+
+          {/* 3. 검색 버튼 (오른쪽 배치) */}
           <Col xs={6} md={3}>
             <Button
               type="submit"
@@ -148,7 +154,8 @@ export default function Search() {
           </Col>
         </Row>
 
-        <div className="mt-2">
+        {/* 토글 스위치 중앙 정렬 */}
+        <div className="mt-2 d-flex justify-content-center">
           <Form.Check
             type="switch"
             id="exact-switch"
