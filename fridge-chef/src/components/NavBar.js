@@ -1,6 +1,7 @@
+// src/components/NavBar.js
 import React, { useContext } from 'react';
 import { Navbar, Container, Nav } from 'react-bootstrap';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { RecipeContext } from '../context/RecipeContext';
 
 function AppNavBar() {
@@ -14,13 +15,17 @@ function AppNavBar() {
     textDecoration: 'none'
   });
 
-  // 로고/브랜드 클릭 → 검색 상태 초기화 + 홈으로 이동
+  // ✅ 로고/브랜드 클릭 → 무조건 랜딩 + 검색 상태 초기화
   const handleBrandClick = (e) => {
-    e.preventDefault(); // 기본 Link 동작 막고
-    if (dispatch) {
-      dispatch({ type: 'RESET_SEARCH' });
-    }
-    navigate('/'); // 홈으로 이동
+    e.preventDefault();
+    if (dispatch) dispatch({ type: 'RESET_SEARCH' });
+    navigate('/', { state: { reset: true, mode: 'landing' } });
+  };
+
+  // ✅ 상단 "재료로 찾기" 메뉴 클릭 → 기존 Search 화면(원본 느낌) 유지
+  const handleGoSearchPage = (e) => {
+    e.preventDefault();
+    navigate('/', { state: { mode: 'search' } });
   };
 
   return (
@@ -35,8 +40,7 @@ function AppNavBar() {
       <Container>
         {/* 왼쪽 상단 로고 + 텍스트 */}
         <Navbar.Brand
-          as={Link}
-          to="/"
+          href="/"
           onClick={handleBrandClick}
           className="d-flex align-items-center"
           style={{
@@ -46,15 +50,17 @@ function AppNavBar() {
             cursor: 'pointer'
           }}
         >
+          {/* ✅ 로고 선명도 개선: objectFit을 contain으로 + 브라우저가 더 선명하게 샘플링하도록 width/height 명시 */}
           <img
             src="/assets/logo/logo.png"
+            srcSet="/assets/logo/logo.png 2x"
             alt="한식 냉장고 로고"
+            width={40}
+            height={40}
             style={{
-              width: 40,
-              height: 40,
               marginRight: 10,
               borderRadius: '50%',
-              objectFit: 'cover'
+              objectFit: 'contain'
             }}
           />
           <span>냉장고 너머의 한(韓)상</span>
@@ -64,9 +70,10 @@ function AppNavBar() {
 
         <Navbar.Collapse id="main-nav">
           <Nav className="ms-auto align-items-center">
-            <NavLink to="/" style={linkStyle} end>
+            {/* ✅ 재료로 찾기: 기존 Search 화면 모드로 진입 */}
+            <Nav.Link href="/" onClick={handleGoSearchPage} style={linkStyle({ isActive: false })}>
               재료로 찾기
-            </NavLink>
+            </Nav.Link>
 
             <NavLink to="/recipes" style={linkStyle}>
               레시피 목록

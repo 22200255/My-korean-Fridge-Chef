@@ -1,10 +1,11 @@
+// src/pages/HomePage.js
 import React from 'react';
 import { Container } from 'react-bootstrap';
-import Search from './Search';  // 기존 페이지 재사용
+import Search from './Search';
 
 function HomePage() {
   return (
-    <Container className="mt-4 mb-4">
+    <Container className="mb-4">
       <Search />
     </Container>
   );

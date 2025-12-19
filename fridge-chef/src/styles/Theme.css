@@ -1,9 +1,9 @@
 :root {
-  --main-brown: #8D6E63;     /* 메인 브라운 (한식 느낌) */
-  --sub-beige: #D7CCC8;      /* 연한 베이지 */
-  --point-orange: #FF7043;   /* 포인트 오렌지 (양념/고추기름 느낌) */
-  --bg-cream: #FFF8E1;       /* 전체 배경 크림 */
-  --text-brown: #4E342E;     /* 텍스트 브라운 */
+  --main-brown: #8D6E63;
+  --sub-beige: #D7CCC8;
+  --point-orange: #FF7043;
+  --bg-cream: #FFF8E1;
+  --text-brown: #4E342E;
 }
 
 body {
@@ -29,4 +29,77 @@ a {
 
 .app-content {
   flex: 1;
+}
+
+/* ===== Search 첫 화면(랜딩) 전용 UI ===== */
+.search-landing {
+  min-height: calc(100vh - 180px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 0;
+}
+
+/* 전체를 중앙보다 살짝 위로 */
+.search-landing-center {
+  width: 100%;
+  transform: translateY(-40px);
+}
+
+.search-landing-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.search-landing-title {
+  margin-top: 12px;
+  margin-bottom: 0;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.search-landing-form {
+  width: 100%;
+  margin: 0;
+}
+
+/* 랜딩 검색 UI 중앙 폭 제한 */
+.search-form-wrap {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+/* 랜딩에서 토글을 입력창 기준 좌측 아래 */
+.exact-switch-under-input {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* 랜딩에서 input/select/button 크기 업 */
+.search-input-lg.form-select,
+.search-input-lg.form-control {
+  font-size: 1.05rem;
+  padding: 14px 14px;
+  border-radius: 14px;
+}
+
+.search-input-lg.btn {
+  font-size: 1.05rem;
+  padding: 14px 12px;
+  border-radius: 14px;
+}
+
+@media (max-width: 767px) {
+  .search-landing {
+    min-height: calc(100vh - 220px);
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+  .search-landing-center {
+    transform: translateY(-10px);
+  }
 }
