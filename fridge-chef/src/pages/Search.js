@@ -133,13 +133,13 @@ export default function Search() {
   const resolvedMode = mode ?? 'landing';
   const isLanding = resolvedMode === 'landing' && !hasSearched;
 
-  // ✅ 기존(원본 느낌) Search UI: 너가 보낸 코드 그대로 유지
+  // ✅ 기존(원본 느낌) Search UI 유지
+  // ✅ [요구사항 반영] 토글을 "전체 종류(카테고리)" 하단 좌측으로 배치
   const OriginalSearchUI = (
     <Container className="mt-5">
       <h2>냉장고 재료로 레시피 찾기</h2>
 
       <Form onSubmit={handleSearch} className="mb-4">
-        {/* [수정] 순서 변경: 필터(Select) -> 입력창(Input) -> 버튼(Button) */}
         <Row className="g-2 align-items-center">
           {/* 1. 검색 필터 (왼쪽 배치) */}
           <Col xs={6} md={3}>
@@ -184,16 +184,22 @@ export default function Search() {
           </Col>
         </Row>
 
-        {/* 토글 스위치 중앙 정렬 */}
-        <div className="mt-2 d-flex justify-content-center">
-          <Form.Check
-            type="switch"
-            id="exact-switch"
-            label="재료명 정확히 일치만 보기"
-            checked={isExact}
-            onChange={(e) => updateSearchState({ isExact: e.target.checked })}
-          />
-        </div>
+        {/* ✅ 토글을 "전체 종류" 하단 좌측에 배치 */}
+        <Row className="g-2 mt-1">
+          {/* 카테고리와 동일 폭(md=3) 아래에 붙임 */}
+          <Col xs={12} md={3} className="d-flex justify-content-start">
+            <Form.Check
+              type="switch"
+              id="exact-switch"
+              label="재료명 정확히 일치만 보기"
+              checked={isExact}
+              onChange={(e) => updateSearchState({ isExact: e.target.checked })}
+            />
+          </Col>
+
+          {/* 나머지 영역은 비워서 기존 레이아웃 유지 */}
+          <Col md={9} className="d-none d-md-block" />
+        </Row>
       </Form>
 
       {error && <Alert variant="danger">{error}</Alert>}
