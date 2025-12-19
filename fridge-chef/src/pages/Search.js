@@ -103,7 +103,7 @@ export default function Search() {
 
   return (
     <Container className="mt-5">
-      <h2>🍳 냉장고 재료로 레시피 찾기</h2>
+      <h2>냉장고 재료로 레시피 찾기</h2>
       
       <Form onSubmit={handleSearch} className="mb-4">
         {/* [수정] 순서 변경: 필터(Select) -> 입력창(Input) -> 버튼(Button) */}
@@ -198,7 +198,7 @@ export default function Search() {
                         }
                       >
                         <Badge bg="warning" text="dark" style={{cursor: 'help'}}>
-                          ⚠️ 알레르기 주의
+                        알레르기 주의
                         </Badge>
                       </OverlayTrigger>
                     </div>

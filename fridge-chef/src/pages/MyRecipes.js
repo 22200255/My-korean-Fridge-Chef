@@ -38,7 +38,7 @@ export default function MyRecipes() {
 
   return (
     <Container className="mt-5">
-      <h2>📒 나의 즐겨찾기 레시피 ({savedRecipes.length}개)</h2>
+      <h2>나의 즐겨찾기 레시피 ({savedRecipes.length}개)</h2>
       {savedRecipes.length === 0 && <p className="text-muted">저장된 레시피가 없습니다.</p>}
       
       <Row xs={1} md={2} lg={3} className="g-4">
