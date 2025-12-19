@@ -6,7 +6,8 @@ import { Container, Row, Col, Image, Badge, Button, Card } from 'react-bootstrap
 export default function RecipeDetail() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { savedRecipes = [], dispatch } = useContext(RecipeContext) || {};
+  // [수정] addRecipe 함수 가져오기
+  const { addRecipe } = useContext(RecipeContext) || {};
 
   const recipe = location.state?.recipe;
 
@@ -27,14 +28,11 @@ export default function RecipeDetail() {
     if (text) manuals.push({ step: i, text, img });
   }
 
+  // [수정] addRecipe 호출
   const handleSave = () => {
-    if (!dispatch) return;
-    if (savedRecipes.some((r) => r.RCP_SEQ === recipe.RCP_SEQ)) {
-      alert('이미 저장된 레시피입니다!');
-      return;
+    if (addRecipe) {
+      addRecipe(recipe);
     }
-    dispatch({ type: 'ADD', payload: recipe });
-    alert('나만의 레시피북에 저장되었습니다!');
   };
 
   return (
@@ -51,21 +49,9 @@ export default function RecipeDetail() {
           &larr; 뒤로 가기
         </Button>
         
-        {/* [기능 추가 1] 상세 화면에서 저장 버튼 */}
-        <Button
-          onClick={handleSave}
-          style={{
-            backgroundColor: 'var(--point-orange)',
-            borderColor: 'var(--point-orange)',
-            color: '#fff',
-            fontWeight: 'bold',
-            paddingInline: '20px',
-            paddingBlock: '10px'
-          }}
-      >
-          이 레시피 저장하기
+        <Button variant="success" onClick={handleSave}>
+          💖 이 레시피 저장하기
         </Button>
-
       </div>
 
       <Row>
@@ -85,7 +71,7 @@ export default function RecipeDetail() {
           </div>
           <Card className="bg-light border-0">
             <Card.Body>
-              <Card.Title> 재료 준비</Card.Title>
+              <Card.Title>📝 재료 준비</Card.Title>
               <Card.Text style={{ lineHeight: '1.8' }}>
                 {recipe.RCP_PARTS_DTLS}
               </Card.Text>
@@ -94,7 +80,7 @@ export default function RecipeDetail() {
         </Col>
 
         <Col md={7}>
-          <h3 className="mb-4 border-bottom pb-2">조리 순서</h3>
+          <h3 className="mb-4 border-bottom pb-2">🍳 조리 순서</h3>
           {manuals.map((manual) => (
             <div
               key={manual.step}
