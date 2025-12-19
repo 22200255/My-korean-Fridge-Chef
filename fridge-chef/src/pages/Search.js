@@ -18,6 +18,33 @@ import {
   Badge
 } from 'react-bootstrap';
 
+/**
+ * query를 토큰으로 분리한다.
+ * - 쉼표(,) 기준
+ * - 공백 정리
+ */
+function parseQueryTokens(query) {
+  return (query || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+/**
+ * 토글 ON일 때:
+ * - 음식 이름(RCP_NM)에 query 토큰이 "포함"되어야 한다.
+ * - 여러 토큰이면 AND 조건(전부 포함)으로 처리한다.
+ */
+function isNameMatch(rcpName, query) {
+  const name = (rcpName || '').toLowerCase();
+  const tokens = parseQueryTokens(query).map((t) => t.toLowerCase());
+
+  if (tokens.length === 0) return true;
+  if (!name) return false;
+
+  return tokens.every((t) => name.includes(t));
+}
+
 export default function Search() {
   const contextValue = useContext(RecipeContext) || {};
   const {
@@ -37,9 +64,6 @@ export default function Search() {
   const [hasSearched, setHasSearched] = useState(false);
 
   // ✅ mode 제어
-  // - landing: 중앙 랜딩 UI
-  // - search: 기존 Search UI(원본 느낌)
-  // - undefined: 최초 진입은 landing으로 처리
   const mode = location.state?.mode; // 'landing' | 'search' | undefined
 
   // ✅ 로고/브랜드 클릭으로 들어온 reset 신호 처리
@@ -48,7 +72,6 @@ export default function Search() {
       if (dispatch) dispatch({ type: 'RESET_SEARCH' });
       setHasSearched(false);
 
-      // reset state가 뒤로가기에 남지 않도록 replace
       navigate('/', { replace: true, state: { mode: 'landing' } });
     }
   }, [location.state, dispatch, navigate]);
@@ -67,34 +90,33 @@ export default function Search() {
 
   const handleSearch = async (e) => {
     e.preventDefault();
+
     if (!query.trim()) {
       alert('재료를 입력해 주세요!');
       return;
     }
 
-    const data = await fetchRecipes(query.trim());
+    const trimmed = query.trim();
+    const data = await fetchRecipes(trimmed);
     let filtered = data || [];
 
-    // 1차 필터링
+    // 1) 카테고리 필터
     if (category !== 'All') {
       filtered = filtered.filter((r) => r.RCP_PAT2 === category);
     }
 
-    if (isExact && query.trim()) {
-      const q = query.trim();
-      filtered = filtered.filter(
-        (r) => r.RCP_PARTS_DTLS && r.RCP_PARTS_DTLS.includes(q)
-      );
+    // ✅ 2) 토글 ON이면 "음식 이름"에 query 포함된 것만
+    if (isExact) {
+      filtered = filtered.filter((r) => isNameMatch(r.RCP_NM, trimmed));
     }
 
     updateSearchState({
-      query: query.trim(),
+      query: trimmed,
       results: filtered,
       category,
       isExact
     });
 
-    // ✅ 검색 버튼을 눌러 검색이 수행된 뒤에만 랜딩 → 기존 화면으로 전환
     setHasSearched(true);
   };
 
@@ -103,12 +125,10 @@ export default function Search() {
   };
 
   const handleSave = (recipe) => {
-    if (addRecipe) {
-      addRecipe(recipe);
-    }
+    if (addRecipe) addRecipe(recipe);
   };
 
-  // 2차 필터링 (Memoization)
+  // ✅ 토글/카테고리 변경 시 즉시 반영(검색 버튼 다시 누르지 않아도 적용)
   const filteredData = useMemo(() => {
     if (!results || results.length === 0) return [];
     let data = results;
@@ -118,30 +138,23 @@ export default function Search() {
     }
 
     if (isExact && query.trim()) {
-      const q = query.trim();
-      data = data.filter(
-        (r) => r.RCP_PARTS_DTLS && r.RCP_PARTS_DTLS.includes(q)
-      );
+      data = data.filter((r) => isNameMatch(r.RCP_NM, query.trim()));
     }
 
     return data;
   }, [results, category, isExact, query]);
 
   // ✅ 랜딩 표시 조건
-  // - mode가 search면 무조건 기존 화면
-  // - mode가 landing이거나(undefined=최초 진입)면: 검색하기 전까지 랜딩 유지
   const resolvedMode = mode ?? 'landing';
   const isLanding = resolvedMode === 'landing' && !hasSearched;
 
-  // ✅ 기존(원본 느낌) Search UI 유지
-  // ✅ [요구사항 반영] 토글을 "전체 종류(카테고리)" 하단 좌측으로 배치
+  // ✅ 기존 Search UI
   const OriginalSearchUI = (
     <Container className="mt-5">
       <h2>냉장고 재료로 레시피 찾기</h2>
 
       <Form onSubmit={handleSearch} className="mb-4">
         <Row className="g-2 align-items-center">
-          {/* 1. 검색 필터 (왼쪽 배치) */}
           <Col xs={6} md={3}>
             <Form.Select
               value={category}
@@ -155,7 +168,6 @@ export default function Search() {
             </Form.Select>
           </Col>
 
-          {/* 2. 검색어 입력 창 (중앙 배치) */}
           <Col xs={12} md={6}>
             <Form.Control
               ref={inputRef}
@@ -166,7 +178,6 @@ export default function Search() {
             />
           </Col>
 
-          {/* 3. 검색 버튼 (오른쪽 배치) */}
           <Col xs={6} md={3}>
             <Button
               type="submit"
@@ -184,9 +195,8 @@ export default function Search() {
           </Col>
         </Row>
 
-        {/* ✅ 토글을 "전체 종류" 하단 좌측에 배치 */}
+        {/* ✅ 토글: 전체 종류 하단 좌측 */}
         <Row className="g-2 mt-1">
-          {/* 카테고리와 동일 폭(md=3) 아래에 붙임 */}
           <Col xs={12} md={3} className="d-flex justify-content-start">
             <Form.Check
               type="switch"
@@ -196,8 +206,6 @@ export default function Search() {
               onChange={(e) => updateSearchState({ isExact: e.target.checked })}
             />
           </Col>
-
-          {/* 나머지 영역은 비워서 기존 레이아웃 유지 */}
           <Col md={9} className="d-none d-md-block" />
         </Row>
       </Form>
@@ -293,7 +301,7 @@ export default function Search() {
     </Container>
   );
 
-  // ✅ 랜딩 UI(중앙 배치) — 검색 후/메뉴 진입은 이 UI를 쓰지 않음
+  // ✅ 랜딩 UI (유지)
   const LandingUI = (
     <Container className="search-landing">
       <div className="search-landing-center">
@@ -347,7 +355,6 @@ export default function Search() {
               </Col>
             </Row>
 
-            {/* 랜딩에서는 토글을 입력창 기준 왼쪽 아래 */}
             <Row className="g-2 mt-1">
               <Col md={2} className="d-none d-md-block" />
               <Col xs={12} md={8} className="exact-switch-under-input">
@@ -364,7 +371,6 @@ export default function Search() {
           </div>
         </Form>
 
-        {/* 에러는 랜딩에서도 보여주기 */}
         {error && <Alert className="mt-3" variant="danger">{error}</Alert>}
       </div>
     </Container>
