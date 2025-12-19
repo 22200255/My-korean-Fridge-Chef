@@ -1,31 +1,34 @@
 import React, { useState, useContext } from 'react';
 import { RecipeContext } from '../context/RecipeContext';
 import { useNavigate } from 'react-router-dom';
-import { Container, Card, Button, Form, Row, Col, Badge } from 'react-bootstrap';
+import { Container, Card, Button, Form, Row, Col } from 'react-bootstrap';
 
 export default function MyRecipes() {
-  const { savedRecipes = [], dispatch } = useContext(RecipeContext) || {};
+  // [수정] Context에서 CRUD 함수들 가져오기
+  const { savedRecipes = [], deleteRecipe, updateMemo } = useContext(RecipeContext) || {};
   const navigate = useNavigate();
 
   const [editId, setEditId] = useState(null);
   const [memoInput, setMemoInput] = useState('');
 
   const startEdit = (recipe) => {
-    setEditId(recipe.RCP_SEQ);
+    // [수정] 식약처 ID가 아닌 MockAPI의 id를 사용
+    setEditId(recipe.id); 
     setMemoInput(recipe.myMemo || '');
   };
 
   const saveEdit = (id) => {
-    if (!dispatch) return;
-    dispatch({ type: 'UPDATE_MEMO', payload: { id, memo: memoInput } });
+    // [수정] updateMemo 함수 호출
+    if (updateMemo) {
+      updateMemo(id, memoInput);
+    }
     setEditId(null);
-    alert('메모가 저장되었습니다!');
   };
 
   const handleDelete = (id) => {
-    if (!dispatch) return;
-    if (window.confirm('정말 이 레시피를 삭제하시겠습니까?')) {
-      dispatch({ type: 'DELETE', payload: id });
+    // [수정] deleteRecipe 함수 호출
+    if (deleteRecipe) {
+      deleteRecipe(id);
     }
   };
 
@@ -35,13 +38,13 @@ export default function MyRecipes() {
 
   return (
     <Container className="mt-5">
-      <h2> 나의 즐겨찾기 레시피 ({savedRecipes.length}개)</h2>
+      <h2>📒 나의 즐겨찾기 레시피 ({savedRecipes.length}개)</h2>
       {savedRecipes.length === 0 && <p className="text-muted">저장된 레시피가 없습니다.</p>}
       
-      {/* [수정] lg={3} 추가하여 화면이 넓을 때 3등분으로 보이도록 변경 */}
       <Row xs={1} md={2} lg={3} className="g-4">
         {savedRecipes.map((recipe) => (
-          <Col key={recipe.RCP_SEQ}>
+          // [수정] key로 recipe.id 사용
+          <Col key={recipe.id}>
             <Card className="h-100 shadow-sm">
               <div style={{cursor: 'pointer'}} onClick={() => goToDetail(recipe)}>
                 <Card.Img variant="top" src={recipe.ATT_FILE_NO_MAIN} style={{height: '200px', objectFit: 'cover'}}/>
@@ -54,7 +57,8 @@ export default function MyRecipes() {
                   {recipe.RCP_NM}
                 </Card.Title>
                 
-                {editId === recipe.RCP_SEQ ? (
+                {/* [수정] editId 비교 시 recipe.id 사용 */}
+                {editId === recipe.id ? (
                   <Form.Group className="mb-3">
                     <Form.Control 
                       as="textarea" 
@@ -62,13 +66,13 @@ export default function MyRecipes() {
                       onChange={(e) => setMemoInput(e.target.value)} 
                     />
                     <div className="mt-2">
-                      <Button size="sm" onClick={() => saveEdit(recipe.RCP_SEQ)} className="me-2">저장</Button>
+                      <Button size="sm" onClick={() => saveEdit(recipe.id)} className="me-2">저장</Button>
                       <Button size="sm" variant="secondary" onClick={() => setEditId(null)}>취소</Button>
                     </div>
                   </Form.Group>
                 ) : (
                   <>
-                    <Card.Text> {recipe.myMemo || "메모 없음"}</Card.Text>
+                    <Card.Text>📝 {recipe.myMemo || "메모 없음"}</Card.Text>
                     
                     <div className="mt-auto">
                       <Button 
@@ -82,7 +86,8 @@ export default function MyRecipes() {
                       
                       <div className="d-flex justify-content-end">
                         <Button size="sm" variant="warning" className="me-2" onClick={() => startEdit(recipe)}>메모 수정</Button>
-                        <Button size="sm" variant="danger" onClick={() => handleDelete(recipe.RCP_SEQ)}>삭제</Button>
+                        {/* [수정] 삭제 시 recipe.id 전달 */}
+                        <Button size="sm" variant="danger" onClick={() => handleDelete(recipe.id)}>삭제</Button>
                       </div>
                     </div>
                   </>
