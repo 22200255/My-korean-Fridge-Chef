@@ -4,7 +4,7 @@ My Korean Fridge Chef는 사용자가 보유한 식재료를 기반으로 만들
 관심 레시피를 저장·관리할 수 있는 React 기반 SPA(Single Page Application) 프로젝트이다.
 냉장고 속 재료를 효율적으로 활용하도록 돕는 것을 목표로 한다.
 
-1. 프로젝트 개요
+# 1. 프로젝트 개요
 
 프로젝트명: My Korean Fridge Chef
 
@@ -51,6 +51,7 @@ HomePage, AboutPage 등 페이지별 컴포넌트를 분리하여 구성하였�
 React Router를 사용하여 페이지 전환을 처리한다.
 
 3. 프로젝트 구조
+'''
 My-korean-Fridge-Chef-main/
 ├── README.md
 └── fridge-chef/
@@ -84,8 +85,8 @@ My-korean-Fridge-Chef-main/
         ├── utils/
         │   └── allergyUtils.js
         └── reportWebVitals.js
-
-4. 사용 기술
+'''
+5. 사용 기술
 Frontend
 
 React
