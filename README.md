@@ -92,6 +92,8 @@ My-korean-Fridge-Chef-main/
         │   └── allergyUtils.js
         └── reportWebVitals.js
 
+```
+
 # 4. 사용 기술
 
 ## 4.1 Frontend
